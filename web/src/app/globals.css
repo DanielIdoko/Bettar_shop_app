@@ -291,5 +291,5 @@
   @apply w-[270px] h-screen bg-white border-r p-4 py-2 border-r-muted flex flex-col items-center 
 }
 .profile-sidebar-link{
-  @apply text-small text-gray-500 p-2 flex items-center gap-3 rounded-md cursor-pointer
+  @apply text-small text-gray-500 p-2 flex items-center gap-3 rounded-md cursor-pointer hover:bg-muted transition duration-200 ease-in
 }

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils"; 
+import { cn } from "@/lib/utils";
 
 type NavLinkProps = {
   href: string;
@@ -17,6 +17,8 @@ export const NavLink = ({
   className,
 }: NavLinkProps) => {
   const pathname = usePathname();
+  if (!pathname) return null;
+
   const isActive = pathname === href;
 
   return (
