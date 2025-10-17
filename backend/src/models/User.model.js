@@ -55,6 +55,13 @@ const userSchema = new Schema(
       lastLoginAt: Date,
       createdVia: { type: String }, // e.g., "email", "google"
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    twoFactorSecret: String,
   },
   { timestamps: true }
 );
