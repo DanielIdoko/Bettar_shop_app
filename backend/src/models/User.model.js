@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 import { AddressSchema } from "./common.model.js";
 
 const { Schema } = mongoose;
@@ -24,7 +23,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: 6,
-      select: false, // don't return by default
     },
     role: {
       type: String,
@@ -66,31 +64,6 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-// Pre-save: hash password if modified
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-});
-
-// Instance method: compare password
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  if (!this.password) return false;
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
-// Hide sensitive fields when converting to JSON
-userSchema.methods.toJSON = function () {
-  const obj = this.toObject({ virtuals: true });
-  delete obj.password;
-  if (obj.twoFactor) delete obj.twoFactor.secret;
-  return obj;
-};
 
 const User = mongoose.model("User", userSchema);
 export default User;

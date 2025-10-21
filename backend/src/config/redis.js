@@ -16,15 +16,15 @@ redisClient.on("connect", () => {
 });
 
 redisClient.on("ready", () => {
-  console.log("✅ Redis connected and ready to use.");
+  console.log("Redis connected and ready to use.");
 });
 
 redisClient.on("error", (err) => {
-  console.error("❌ Redis connection error:", err);
+  console.error("Redis connection error:", err);
 });
 
 redisClient.on("end", () => {
-  console.log("⚠️ Redis connection closed.");
+  console.log("Redis connection closed.");
 });
 
 // Connect automatically on startup

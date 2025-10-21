@@ -6,7 +6,13 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import sendEmail from "../utils/sendEmail.js";
-import { JWT_SECRET, FRONTEND_URL } from "../config/env.config.js";
+import {
+  JWT_SECRET,
+  FRONTEND_URL,
+  JWT_EXPIRES_IN,
+  NODE_ENV,
+} from "../config/env.config.js";
+import { error } from "console";
 
 /**
  * @desc Register a new user
@@ -25,7 +31,10 @@ export const registerUser = asyncHandler(async (req, res) => {
   // Check if user exists
   const userExists = await User.findOne({ email });
   if (userExists) {
-    res.status(400);
+    res.status(400).json({
+      success: false,
+      error: "Sorry, a user with that email already exists.",
+    });
     throw new Error("User already exists");
   }
 
@@ -39,22 +48,40 @@ export const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
   });
 
+  // Cookie setup
+  const cookieOptions = {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+
   // Generate verification token
-  const verificationToken = jwt.sign({ id: user._id }, JWT_SECRET, {
-    expiresIn: "1d",
+  const token = jwt.sign({ id: user._id }, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
   });
 
-  // Send verification email (optional utility)
-  const verifyUrl = `${FRONTEND_URL}/verify-email?token=${verificationToken}`;
+  res.cookie("token", token, cookieOptions);
+
+  // Send verification email
+  const verifyUrl = `${FRONTEND_URL}/verify-email?token=${token}`;
   await sendEmail(
     user.email,
     "Verify your account",
     `Welcome to our store, ${user.name}! Please verify your email by clicking the link below:\n\n${verifyUrl}`
   );
 
+  const userResponse = user.toObject();
+  delete userResponse.password;
+  delete userResponse.__v;
+
   res.status(201).json({
     success: true,
     message: "User registered successfully. Please verify your email.",
+    data: {
+      token,
+      user: userResponse,
+    },
   });
 });
 
@@ -87,7 +114,14 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     }
 
     user.isVerified = true;
+    
     await user.save();
+
+    await sendEmail(
+      user.email,
+      "Email Verification Success",
+      `Dear ${user.name}, you have successfully verified your email. Thank you for choosing Bettar Shop.`
+    );
 
     res
       .status(200)
@@ -112,17 +146,17 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Please enter email and password");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     res.status(401);
-    throw new Error("Invalid email or password");
+    throw new Error("User not found");
   }
 
-  if (!user.isVerified) {
-    res.status(401);
-    throw new Error("Please verify your email before logging in");
-  }
+  // if (!user.isVerified) {
+  //   res.status(401);
+  //   throw new Error("Please verify your email before logging in");
+  // }
 
   // Check password
   const isPasswordMatch = await bcrypt.compare(password, user.password);
@@ -134,8 +168,22 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   // Generate token
   const token = jwt.sign({ id: user._id }, JWT_SECRET, {
-    expiresIn: TOKEN_EXPIRES_IN || "7d",
+    expiresIn: JWT_EXPIRES_IN,
   });
+
+  // Cookie setup
+  const cookieOptions = {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+
+  res.cookie("token", token, cookieOptions);
+
+  const userResponse = user.toObject();
+  delete userResponse.password;
+  delete userResponse.__v;
 
   res.status(200).json({
     success: true,
@@ -157,7 +205,12 @@ export const loginUser = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const logoutUser = asyncHandler(async (req, res) => {
-  // If you store JWTs in frontend, you can just delete them on client-side.
+  // Clear JWT cookie
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+  });
   res
     .status(200)
     .json({ success: true, message: "User logged out successfully" });
@@ -192,7 +245,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     throw new Error("Email is required");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     res.status(404);
@@ -289,7 +342,7 @@ export const enableTwoFactor = asyncHandler(async (req, res) => {
     success: true,
     message: "2FA setup initiated successfully",
     qrCode: qrCodeData,
-    secret: secret.base32, // You can omit this in production for security
+    secret: secret.base32,
   });
 });
 

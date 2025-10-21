@@ -68,13 +68,13 @@ authRouter.post("/reset-password", resetPassword);
  * @desc    Enable two-factor authentication for user
  * @access  Private
  */
-authRouter.post("/enable-2fa", protect, enableTwoFactor);
+  authRouter.post("/enable-2fa/:id", protect, enableTwoFactor);
 
 /**
  * @route   POST /api/auth/verify-2fa
  * @desc    Verify OTP / 2FA code for login
  * @access  Private
  */
-authRouter.post("/verify-2fa", protect, verifyTwoFactor);
+authRouter.post("/verify-2fa/:id", protect, verifyTwoFactor);
 
 export default authRouter;

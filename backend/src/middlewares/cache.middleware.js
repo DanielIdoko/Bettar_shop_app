@@ -21,7 +21,6 @@ export const cacheMiddleware = (prefix, ttl = 600) => {
 
       if (cached) {
         console.log(`Cache hit → ${key}`);
-        return res.status(200).json(JSON.parse(cached));
       }
 
       // Hook into res.json to save response
