@@ -31,10 +31,7 @@ const userSchema = new Schema(
     },
     avatar: { type: String },
     phone: { type: String },
-    addresses: {
-      type: [AddressSchema],
-      default: [],
-    },
+    addresses: [AddressSchema],
     preferences: {
       theme: { type: String, enum: ["light", "dark"], default: "light" },
       language: { type: String, default: "en" },

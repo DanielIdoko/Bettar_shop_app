@@ -7,12 +7,12 @@ import { v4 as uuidv4 } from "uuid";
 
 /**
  * @desc Get logged-in user profile
- * @route GET /api/auth/me
+ * @route GET /api/users/profile
  * @access Private
  */
-
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const cacheKey = `user:${req.user.id}`;
+  const userId = req.user.id;
+  const cacheKey = `user:${userId}`;
 
   // Try to get user profile from cache if it exists yet
   const cachedProfile = await getCache(cacheKey);
@@ -25,7 +25,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     });
   }
 
-  const userProfile = await User.findById(req.user.id).select("-password");
+  const userProfile = await User.findById(userId).select("-password");
 
   if (!userProfile) {
     res.status(404);
@@ -42,17 +42,23 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * @desc update user profile (name, email, phone, avatar)
+ * @route POST /api/users/profile/:id
+ * @access Private
+ */
 export const updateUserProfile = asyncHandler(async (req, res) => {
-  const cacheKey = `user:${req.user.id}`;
+  const userId = req.user.id;
+  const cacheKey = `user:${userId}`;
 
-  await clearCache("user");
+  await clearCache(userId);
 
   // Set new updates to profile
   const updatedProfile = await User.findByIdAndUpdate(
-    req.user.id,
+    userId,
     { $set: { ...req.body } },
     { new: true }
-  );
+  ).populate("name email phone avatar");
 
   if (!updatedProfile) {
     res.status(404);
@@ -70,9 +76,10 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 });
 
 export const updateUserPassword = asyncHandler(async (req, res) => {
-  const cacheKey = `user:${req.user.id}`;
+  const userId = req.user.id;
+  const cacheKey = `user:${userId}`;
 
-  await clearCache("user");
+  await clearCache(userId);
 
   const { password } = req.body;
 
@@ -81,7 +88,7 @@ export const updateUserPassword = asyncHandler(async (req, res) => {
     throw new Error("Password to update not provided.");
   }
 
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(userId);
 
   if (!user) {
     res.status(404);
@@ -111,6 +118,7 @@ export const updateUserPassword = asyncHandler(async (req, res) => {
 
 export const getUserAddresses = asyncHandler(async (req, res) => {
   const cacheKey = `user:${req.user.id}`;
+  const userId = req.user.id;
 
   // Try to get user profile from cache if it exists yet
   const cachedProfile = await getCache(cacheKey);
@@ -123,7 +131,7 @@ export const getUserAddresses = asyncHandler(async (req, res) => {
     });
   }
 
-  const userProfile = await User.findById(req.user.id).select("-password");
+  const userProfile = await User.findById(userId).select("-password");
 
   if (!userProfile) {
     res.status(404);
@@ -152,6 +160,7 @@ export const addUserAddress = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(userId);
+
   if (!user) {
     res.status(404);
     throw new Error("User not found.");
@@ -166,19 +175,20 @@ export const addUserAddress = asyncHandler(async (req, res) => {
     postalCode,
     country,
     isDefault: isDefault || user.addresses.length === 0,
-    line1
+    line1,
   };
 
   // If new address is default, set all others to false
-  if (newAddress.isDefault) {
-    user.addresses.forEach((addr) => (addr.isDefault = false));
-  }
+  if (newAddress.isDefault)
+    user.addresses.forEach((address) => (address.isDefault = false));
 
-  user.addresses.push(newAddress);
+  user.addresses.unshift(newAddress);
   await user.save();
 
+  const cacheKey = `user:${userId}`;
+
   await clearCache(userId);
-  await setCache(userId, user);
+  await setCache(cacheKey, user);
 
   res.status(201).json({
     success: true,
@@ -187,4 +197,97 @@ export const addUserAddress = asyncHandler(async (req, res) => {
   });
 });
 
-export const deleteUserAddress = asyncHandler(async (req, res) => {});
+export const deleteUserAddress = asyncHandler(async (req, res) => {
+  const addressId = req.addressId;
+  const userId = req.user.id;
+  const cacheKey = `user:${req.user.id}`;
+
+  if (!userId) {
+    res.status(404);
+    throw new Error("User not found.");
+  }
+  if (!addressId) {
+    res.status(404);
+    throw new Error("Address not found.");
+  }
+
+  // Clear cache
+  await clearCache(userId);
+
+  const user = await User.findById(userId);
+
+  user.addresses.filter((id) => id !== addressId);
+  // Save new addresses array
+  await user.save();
+
+  // Save to cache
+  await setCache(cacheKey, user);
+
+  res.status(200).json({
+    success: true,
+    message: "Address has been successfully removed.",
+  });
+});
+
+export const updateUserPreferences = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const cacheKey = `user:${req.user.id}`;
+
+  if (!userId) {
+    res.status(404);
+    throw new Error("User not found.");
+  }
+
+  // clear cache
+  await clearCache(userId);
+
+  const { theme, language, emailNotifications, pushNotifications } = req.body;
+
+  // Update properties under preferences object
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      preferences: {
+        theme,
+        language,
+        emailNotifications,
+        pushNotifications,
+      },
+    },
+    { new: true }
+  );
+
+  // Save to cache
+  await setCache(cacheKey, user);
+
+  res.status(200).json({
+    success: true,
+    message: "Preferences updated successfully.",
+  });
+});
+
+
+/**
+ * @desc Delete a user's account
+ * @route GET /api/users/delete-account/:id
+ * @access Private
+ */
+export const deleteUserAccount = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  if (!userId) {
+    res.status(404);
+    throw new Error("User not found.");
+  }
+
+  // Delete from cache
+  await clearCache(userId);
+
+  // Delete from db
+  await User.findByIdAndDelete(userId);
+
+  res.status(200).json({
+    success: true,
+    message: "User account deleted.",
+  });
+});
