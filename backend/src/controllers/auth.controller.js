@@ -224,6 +224,8 @@ export const logoutUser = asyncHandler(async (req, res) => {
 export const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
 
+  delete user.__v;
+
   if (!user) {
     res.status(404);
     throw new Error("User not found");
@@ -333,6 +335,7 @@ export const enableTwoFactor = asyncHandler(async (req, res) => {
   });
 
   user.twoFactorSecret = secret.base32;
+  user.twoFactorEnabled = true
   await user.save();
 
   // Generate QR code for user
@@ -378,7 +381,6 @@ export const verifyTwoFactor = asyncHandler(async (req, res) => {
     throw new Error("Invalid or expired 2FA code");
   }
 
-  user.twoFactorEnabled = true;
   await user.save();
 
   res.status(200).json({

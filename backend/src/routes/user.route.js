@@ -5,6 +5,7 @@ import {
   updateUserPassword,
   getUserAddresses,
   addUserAddress,
+  updateUserAddress,
   deleteUserAddress,
   updateUserPreferences,
   deleteUserAccount,
@@ -22,7 +23,7 @@ const userRouter = Router();
 userRouter.get(
   "/profile/:id",
   protect,
-  cacheMiddleware("user"),
+  // cacheMiddleware("user"),
   getUserProfile
 );
 
@@ -55,6 +56,13 @@ userRouter.get("/addresses/:id", protect, getUserAddresses);
 userRouter.post("/addresses/:id", protect, addUserAddress);
 
 /**
+ * @route   POST /api/users/addresses/:id/addressId
+ * @desc    Update a shipping address
+ * @access  Private
+ */
+userRouter.put("/addresses/:id/:addressId", protect, updateUserAddress);
+
+/**
  * @route   DELETE /api/users/addresses/:id
  * @desc    Delete a shipping address
  * @access  Private
@@ -69,10 +77,10 @@ userRouter.delete("/addresses/:id/:addressId", protect, deleteUserAddress);
 userRouter.put("/preferences/:id", protect, updateUserPreferences);
 
 /**
- * @route   PUT /api/users/delete-account/:id
+ * @route   POST /api/users/delete-account/:id
  * @desc    Delete user account
  * @access  Private
  */
-userRouter.put("/delete-account/:id", protect, deleteUserAccount);
+userRouter.post("/delete-account/:id", protect, deleteUserAccount);
 
 export default userRouter;

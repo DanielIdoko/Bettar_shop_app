@@ -1,14 +1,21 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-aggregate-paginate-v2";
+import slugify from "slugify";
 
 const { Schema } = mongoose;
 
 const ProductSchema = new Schema(
   {
-    title: { type: String, required: true, trim: true, index: true },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+      lowercase: true,
+    },
     slug: { type: String, index: true },
     description: { type: String },
-    images: [{ type: String }],
+    images: [String],
     price: { type: Number, required: true, min: 0 },
     discount: { type: Number, default: 0 }, // percentage or amount based on logic
     stock: { type: Number, default: 0 },
@@ -37,13 +44,17 @@ ProductSchema.virtual("finalPrice").get(function () {
   return Math.round((this.price - disc) * 100) / 100;
 });
 
-// toJSON transform
-ProductSchema.set("toJSON", {
-  virtuals: true,
-  transform(doc, ret) {
-    // optionally remove internal fields
-    return ret;
-  },
+// Pre generate slug for products
+// Handle slug collisions
+ProductSchema.pre("save", async function (next) {
+  if (this.isModified("title")) {
+    let slug = slugify(this.title, { lower: true, strict: true });
+    const existing = await this.constructor.findOne({ slug });
+    if (existing && existing._id.toString() !== this._id.toString())
+      slug = `${slug}-${Date.now()}`;
+    this.slug = slug;
+  }
+  next();
 });
 
 const Product = mongoose.model("Product", ProductSchema);

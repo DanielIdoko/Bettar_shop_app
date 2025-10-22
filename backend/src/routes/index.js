@@ -1,7 +1,7 @@
 import express from "express";
 import authRouter from "./auth.route.js";
 import userRouter from "./user.route.js";
-// import productRouter from "./product.route.js";
+import productRouter from "./product.route.js";
 // import categoryRouter from "./category.route.js";
 // import orderRouter from "./order.route.js";
 // import cartRouter from "./cart.route.js";
@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.use("/auth", authRouter);
 router.use("/users", userRouter);
-// router.use("/products", productRouter);
+router.use("/products", productRouter);
 // router.use("/categories", categoryRouter);
 // router.use("/orders", orderRouter);
 // router.use("/cart", cartRouter);
