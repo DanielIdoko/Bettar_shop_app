@@ -38,7 +38,38 @@ redisClient.on("end", () => {
 
 
 
-// HELPER FUNCTIONS
+// Redis Helper functions
+/**
+ * @desc    Get value from cache or set it if not found
+ * @param   {string} key - Unique cache key
+ * @param   {function} fetchFunction - Function that returns fresh data
+ * @param   {number} ttl - Time-to-live in seconds (default: 1 hour)
+ * @returns {Promise<any>} Cached or fresh data
+ */
+export const getOrSetCache = async (key, fetchFunction, ttl = 3600) => {
+  try {
+    // Check if cached value exists
+    const cachedData = await redisClient.get(key);
+
+    if (cachedData) {
+      console.log(`Cache hit: ${key}`);
+      return JSON.parse(cachedData);
+    }
+
+    console.log(`Cache miss: ${key}`);
+    const freshData = await fetchFunction();
+
+    // Store fresh data in Redis
+    await redisClient.setEx(key, ttl, JSON.stringify(freshData));
+
+    return freshData;
+  } catch (error) {
+    console.error("Redis getOrSetCache error:", error.message);
+    // If Redis fails, fallback to fetching fresh data
+    return await fetchFunction();
+  }
+};
+
 /**
  * Set a cache entry
  * @param {string} key - Cache key
