@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getAllProducts,
   getFeaturedProducts,
+  getLatestProducts,
   getSingleProduct,
   createProduct,
   updateProduct,
@@ -26,6 +27,13 @@ productRouter.get("/", getAllProducts);
  * @access  Public
  */
 productRouter.get("/featured", getFeaturedProducts);
+
+/**
+ * @route   GET /api/products/new-arrivals
+ * @desc    Get latest products
+ * @access  Public
+ */
+productRouter.get("/new-arrivals", getLatestProducts);
 
 /**
  * @route   GET /api/products/:slug

@@ -9,8 +9,10 @@ export const colors = {
   background: "#FFFFFF",
   success: "#10B981",
   textPrimary: "#111827",
+  textMuted: "#6B7280",
+  textDark: "#333",
   textSecondary: "#6B7280",
-  backgroundLight: "#F9FAFB",
+  backgroundLight: "#F8F9FB",
   backgroundDark: "#111827",
   cardBG: "#FFFFFF",
 };

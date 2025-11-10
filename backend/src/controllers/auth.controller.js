@@ -48,20 +48,10 @@ export const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
   });
 
-  // Cookie setup
-  const cookieOptions = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  };
-
   // Generate verification token
   const token = jwt.sign({ id: user._id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
-
-  res.cookie("token", token, cookieOptions);
 
   // Send verification email
   const verifyUrl = `${FRONTEND_URL}/verify-email?token=${token}`;
@@ -70,6 +60,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     "Verify your account",
     `Welcome to our store, ${user.name}! Please verify your email by clicking the link below:\n\n${verifyUrl}`
   );
+
+  // Cookie setup
+  const cookieOptions = {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+
+  res.cookie("token", token, cookieOptions);
 
   const userResponse = user.toObject();
   delete userResponse.password;
@@ -114,7 +114,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     }
 
     user.isVerified = true;
-    
+
     await user.save();
 
     await sendEmail(
@@ -205,12 +205,14 @@ export const loginUser = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const logoutUser = asyncHandler(async (req, res) => {
-  // Clear JWT cookie
-  res.clearCookie("token", {
+  const cookieOptions = {
     httpOnly: true,
     secure: NODE_ENV === "production",
     sameSite: "strict",
-  });
+  };
+  // Clear cookies from browser on logout
+  res.clearCookie("token", token, cookieOptions);
+  
   res
     .status(200)
     .json({ success: true, message: "User logged out successfully" });
@@ -335,7 +337,7 @@ export const enableTwoFactor = asyncHandler(async (req, res) => {
   });
 
   user.twoFactorSecret = secret.base32;
-  user.twoFactorEnabled = true
+  user.twoFactorEnabled = true;
   await user.save();
 
   // Generate QR code for user

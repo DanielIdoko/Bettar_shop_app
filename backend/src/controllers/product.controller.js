@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Product from "../models/product.model.js";
 import { getCache, setCache } from "../config/redis.js";
 const featuredCacheKey = "featured:products";
+const latestCacheKey = "latest:products";
 
 /**
  * @desc    Get all products
@@ -94,6 +95,37 @@ export const getFeaturedProducts = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc    Get latest products
+ * @route   GET /api/products/new-arrivals
+ * @access  Public
+ */
+export const getLatestProducts = asyncHandler(async (req, res) => {
+  // get from cache and filter from there first
+  const cachedProducts = await getCache(latestCacheKey);
+  if (cachedProducts) {
+    const latestCachedProducts = cachedProducts.slice(0, 20);
+
+    res.status(200).json({
+      source: "cache",
+      success: true,
+      featuredCount: latestCachedProducts.length,
+      data: latestCachedProducts,
+    });
+  }
+
+  // Return data from database otherwise
+  const latestProducts = await Product.find().sort({ createdAt: -1 }).lean();
+  await setCache(latestCacheKey, latestProducts);
+
+  res.status(200).json({
+    source: "dataset",
+    success: true,
+    featuredCount: latestProducts.length,
+    data: latestProducts,
+  });
+});
+
+/**
  * @desc    Get a single product
  * @route   GET /api/products/:slug
  * @access  Public
@@ -153,7 +185,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     isFeatured,
   });
 
-  const cacheKey = 'products';
+  const cacheKey = "products";
   // Clear cached lists
   await clearCache(cacheKey);
   await clearCache(featuredCacheKey);
@@ -165,7 +197,6 @@ export const createProduct = asyncHandler(async (req, res) => {
   });
 });
 
-
 /**
  * @desc    Update product
  * @route   PUT /api/products/:id
@@ -174,7 +205,7 @@ export const createProduct = asyncHandler(async (req, res) => {
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
-  const cacheKey = `product:${id}`
+  const cacheKey = `product:${id}`;
 
   const product = await Product.findByIdAndUpdate(id, updates, { new: true });
 
@@ -202,7 +233,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
  */
 export const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const cacheKey = `product:${id}`
+  const cacheKey = `product:${id}`;
   const product = await Product.findById(id);
 
   if (!product) {

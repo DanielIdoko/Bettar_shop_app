@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   user: null,
   token: null,
-  isLoading: true,
+  isLoading: false,
   error: null,
 
   // Mutators

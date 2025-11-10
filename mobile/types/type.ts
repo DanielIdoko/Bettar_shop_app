@@ -1,3 +1,12 @@
+export type CustomButtonProps = {
+  onPress?: () => void;
+  title?: string;
+  style: Object;
+  textStyle?: Object;
+  rightIcon?: any;
+  isLoading?: boolean;
+};
+
 export interface TabBarIconProps {
   focused: boolean;
   Icon: any;
@@ -24,11 +33,11 @@ export interface User {
   email: string;
   avatar: string;
   phone: string;
-  addresses: [Address];
+  addresses: [Address] | [];
   preferences: {
     theme: "light" | "dark";
-    language: string;
+    language: { type: string; default: "en" };
   };
   wishlist: [];
-  isAdmin: boolean
+  isAdmin: boolean;
 }
