@@ -37,7 +37,7 @@ const bottomNavigation = [
 
 const BottomNav = () => {
   return (
-    <div className="w-full h-14 bg-muted fixed bottom-0 p-1 flex items-center justify-around gap-5 md:hidden">
+    <div className="bottom-nav">
       {bottomNavigation.map(({ id, name, href, icon }) => (
         <NavLink
           href={href}

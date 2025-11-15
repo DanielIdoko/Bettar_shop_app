@@ -28,15 +28,18 @@ const NewArrivals = () => {
           <Spinner />
         ) : error ? (
           <p className="text-center text-md text-error">{error}</p>
+        ) : latestArrivals.length > 0 ? (
+          <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {latestArrivals.slice(0,4).map((latestArrival) => (
+              <ArrivalProduct
+                key={latestArrival._id}
+                latestArrival={latestArrival}
+              />
+            ))}
+          </div>
         ) : (
-          latestArrivals.length > 0 && (
-            <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {latestArrivals.map((latestArrival) => (
-                <ArrivalProduct key={latestArrival._id}/>
-              ))}
-            </div>
-          )
-        )}
+          <p className="info">No new arrivals yet</p>
+        )} 
       </div>
     </section>
   );

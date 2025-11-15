@@ -33,8 +33,11 @@ const LoginPage = () => {
       password: "",
     },
     validate,
-    onSubmit: async (values) => {
-      await login(values.email, values.password);
+    onSubmit: async (values, { resetForm }) => {
+      const successLogin = await login(values.email, values.password);
+      if (successLogin) {
+        resetForm();
+      }
     },
   });
 

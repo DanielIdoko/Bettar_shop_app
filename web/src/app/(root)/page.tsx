@@ -6,6 +6,7 @@ import NewArrivals from "../../../components/NewArrivals";
 import Hero from "../../../components/Hero";
 import FeaturedDeals from "../../../components/FeaturedDeals";
 import Brands from "../../../components/Brands";
+import HelpCenter from "../../../components/HelpCenter";
 
 
 const Home = () => {
@@ -32,6 +33,7 @@ const Home = () => {
       <FeaturedDeals />
       {/* Featured Deals ends */}
       <Brands />
+      <HelpCenter />
     </main>
   );
 };

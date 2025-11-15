@@ -1,4 +1,6 @@
+import { HelpCircle, Phone } from "lucide-react";
 import React from "react";
+import { BiEnvelope } from "react-icons/bi";
 import {
   FaTshirt,
   FaLaptop,
@@ -206,5 +208,51 @@ export const featuredDeals = [
     description:
       "Control lights, cameras, and more with a simple voice command. Get started with the essential smart devices in one easy bundle.",
     cta: { label: "Get Smart Kit", url: "/products/smart-home" },
+  },
+];
+
+// Help Center Component data
+export const helpOptions = [
+  {
+    id: 1,
+    title: "Help Center",
+    subtitle: "help.bettarshop.com",
+    icon: <HelpCircle size={20} className="text-primary" />,
+  },
+  {
+    id: 2,
+    title: "Phone",
+    subtitle: "+234 800 123 4567",
+    icon: <Phone size={20} className="text-primary" />,
+  },
+  {
+    id: 3,
+    title: "EMail Support",
+    subtitle: "bettarshop@gmail.com",
+    icon: <BiEnvelope size={20} className="text-primary" />,
+  },
+];
+
+// Footter Cards data
+export const footerCards = [
+  {
+    id: "e939y93eh3e9h9h9",
+    card_title: "Stripe",
+    card_image: "",
+  },
+  {
+    id: "ud9h93hfh339h93h3",
+    card_title: "Visa",
+    card_image: "",
+  },
+  {
+    id: "sjcwihhw9",
+    card_title: "Mastercard",
+    card_image: "",
+  },
+  {
+    id: "jceihchehc99",
+    card_title: "Amazon Pay",
+    card_image: "",
   },
 ];

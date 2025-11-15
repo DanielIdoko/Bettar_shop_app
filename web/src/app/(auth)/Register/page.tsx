@@ -41,9 +41,16 @@ const RegisterPage = () => {
       password: "",
     },
     validate,
-    onSubmit: async (values) => {
-      // alert(JSON.stringify(values, null, 4))
-      await register(values.name, values.email, values.password);
+    onSubmit: async (values, { resetForm }) => {
+      const success = await register(
+        values.name,
+        values.email,
+        values.password
+      );
+
+      if (success) {
+        resetForm();
+      }
     },
   });
 

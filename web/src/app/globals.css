@@ -175,6 +175,9 @@
   @apply w-fit flex items-center justify-center gap-2 p-1 text-small text-primary font-open-sans;
 }
 
+.info {
+  @apply text-gray-500 text-small text-center;
+}
 .home {
   @apply w-full h-full bg-base p-5;
 }
@@ -229,11 +232,55 @@
   @apply w-9 h-9 rounded-full border border-muted;
 }
 
-.section{
-  @apply w-full h-fit p-4 mt-15
+.section {
+  @apply w-full h-fit p-4 mt-15;
 }
 /* .profileicon */
 
+.bottom-nav {
+  @apply w-full h-14 bg-muted fixed bottom-0 p-1 flex items-center justify-around gap-5 md:hidden z-50;
+}
+
+.brands-grid {
+  @apply w-full h-fit grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-5;
+}
+
+.brand-item {
+  @apply w-full h-24 bg-card flex items-center justify-center p-2 border border-border rounded-md hover:shadow-lg transition-shadow duration-200 ease-in cursor-pointer;
+}
+
+.brand-item img {
+  @apply max-h-full max-w-full object-contain;
+}
+
+.brand-item p {
+  @apply text-center text-dark text-small mt-2 font-open-sans;
+}
+
+.help-center {
+  @apply w-full h-fit bg-primary-lighter/20 p-4 flex flex-col md:flex-row items-center px-10 mt-10;
+}
+
+/* Footer styles */
 .footer {
-  @apply w-full h-fit bg-base p-2 flex items-center justify-center;
+  @apply w-full h-fit p-4   mt-10 bg-white md:grid md:grid-rows-1 md:grid-cols-3;
+}
+.footer .cards-container {
+  @apply w-full h-fit grid grid-cols-4 md:grid-cols-3 lg:grid-cols-7 md:gap-3 lg:gap-15;
+}
+.footer .final-section {
+  @apply w-full h-fit mt-4 p-3 col-span-3 border border-t-gray-400 border-l-0 border-r-0 border-b-0  md:flex items-center justify-center lg:gap-50;
+}
+.final-section a {
+  @apply text-x-small md:text-x-small lg:text-small font-open-sans flex justify-center items-center gap-2;
+}
+.footer .footer-heading {
+  @apply text-medium text-dark font-open-sans pt-7 pb-2;
+}
+.footer .links-container {
+  @apply w-fit h-full flex flex-col gap-2 p-4;
+}
+.links-container a {
+  @apply text-small text-dark/60 font-open-sans transition duration-200 ease-in-out hover:text-dark
+  ;
 }

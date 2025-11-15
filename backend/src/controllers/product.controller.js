@@ -43,8 +43,8 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   // } else {
   const products = await Product.find(query).sort(sortOption).lean();
 
-  console.log(query);
-  console.log(products);
+  // console.log(query);
+  // console.log(products);
 
   await setCache(cacheKey, products);
 
@@ -92,6 +92,34 @@ export const getFeaturedProducts = asyncHandler(async (req, res) => {
       data: featuredProducts,
     });
   }
+});
+
+/**
+ * @desc    Get products brand
+ * @route   GET /api/products/brands
+ * @access  Public
+ */
+export const getProductBrands = asyncHandler(async (req, res) => {
+  const cacheKey = "product:brands";
+
+  // Get distinct brands from products collection from cache first
+  const cachedBrands = await getCache("product:brands");
+  if (cachedBrands) {
+    return res.status(200).json({
+      success: true,
+      data: cachedBrands,
+      source: "cache",
+    });
+  }
+
+  const brands = await Product.distinct("brand");
+  await setCache(cacheKey, brands);
+
+  res.status(200).json({
+    success: true,
+    data: brands,
+    source: "dataset",
+  });
 });
 
 /**
