@@ -8,7 +8,7 @@ import Image from "next/image";
 
 const RegisterPage = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const { register, user } = useAuthStore();
+  const { register, user, isLoading, error } = useAuthStore();
 
   const validate = (values: any) => {
     const errors: any = {};
@@ -42,21 +42,14 @@ const RegisterPage = () => {
     },
     validate,
     onSubmit: async (values, { resetForm }) => {
-      const success = await register(
-        values.name,
-        values.email,
-        values.password
-      );
-
-      if (success) {
-        resetForm();
-      }
+      await register(values.name, values.email, values.password);
+      resetForm();
     },
   });
 
   return (
     <section className="min-h-screen bg-base px-4">
-      <p className="text-3xl text-center text-primary font-bold p-10">
+      <p className="text-xl md:text-2xl text-center text-primary font-semibold font-open-sans p-10">
         Begin your adventure!
       </p>
       <div className="w-full h-fit flex items-center justify-center">
@@ -159,10 +152,14 @@ const RegisterPage = () => {
           {/* Submit */}
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-primary text-white py-2 rounded-md font-open-sans hover:bg-primary-lighter transition-colors cursor-pointer"
           >
             Get Started
           </button>
+          {error && (
+            <p className="mt-4 text-center text-sm text-error">{error}</p>
+          )}
           <p className="text-small text-center py-3">
             Got an Account?{" "}
             <Link href="/Login" className="text-blue-700 underline">

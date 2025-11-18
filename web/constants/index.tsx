@@ -1,4 +1,16 @@
-import { HelpCircle, Phone } from "lucide-react";
+import {
+  Bell,
+  Box,
+  Coins,
+  Heart,
+  HelpCircle,
+  LocationEdit,
+  LogOut,
+  Phone,
+  Settings,
+  Sun,
+  User,
+} from "lucide-react";
 import React from "react";
 import { BiEnvelope } from "react-icons/bi";
 import {
@@ -256,3 +268,60 @@ export const footerCards = [
     card_image: "",
   },
 ];
+
+// Profile Sidebar data
+export const profileSidebarLinks = [
+  {
+    id: 1,
+    title: "Account",
+    url: "/profile/personal-information",
+    icon: <User size={16} />,
+  },
+  {
+    id: 2,
+    title: "Order History",
+    url: "/profile/order-history",
+    icon: <Box size={16} />,
+  },
+  {
+    id: 3,
+    title: "Wishlist",
+    url: "/profile/wishlist",
+    icon: <Heart size={16} />,
+  },
+  {
+    id: 4,
+    title: "Address",
+    url: "/profile/address",
+    icon: <LocationEdit size={16} />,
+  },
+  {
+    id: 5,
+    title: "Payment",
+    url: "/profile/payment",
+    icon: <Coins size={16} />,
+  },
+  {
+    id: 6,
+    title: "Notifications",
+    url: "/profile/notifications",
+    icon: <Bell size={16} />,
+  },
+];
+
+export const bottomProfileSidebarLinks = [
+  {
+    id: 0,
+    title: "Settings",
+    url: "/profile/settings",
+    color: "text-dark",
+    icon: <Settings size={16} />,
+  },
+  {
+    id: 1,
+    title: "Preferences",
+    url: "/profile/preferences",
+    color: "text-dark",
+    icon: <Sun size={16} />,
+  },
+]

@@ -146,7 +146,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Please enter email and password");
   }
 
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email });
 
   if (!user) {
     res.status(401);
@@ -176,7 +176,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 24 * 60 * 60 * 1000,
   };
 
   res.cookie("token", token, cookieOptions);
@@ -189,13 +189,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     success: true,
     message: "Login successful",
     token,
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      isVerified: user.isVerified,
-    },
+    user: userResponse,
   });
 });
 
@@ -212,7 +206,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
   };
   // Clear cookies from browser on logout
   res.clearCookie("token", token, cookieOptions);
-  
+
   res
     .status(200)
     .json({ success: true, message: "User logged out successfully" });
@@ -220,20 +214,22 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 /**
  * @desc Get logged-in user profile
- * @route GET /api/auth/me
+ * @route GET /api/auth/me/:id
  * @access Private
  */
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id).select("-password");
-
-  delete user.__v;
+  const user = await User.findById(req.user._id).select("-password");
 
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
-  res.status(200).json({ success: true, data: user });
+  // Convert to plain object to safely delete fields
+  const userObj = user.toObject();
+  delete userObj.__v;
+
+  res.status(200).json({ success: true, data: userObj });
 });
 
 /**

@@ -42,7 +42,7 @@ export const heroImages = [
 
 const Hero = () => {
   return (
-    <section className="relative w-full h-[65vh] md:h-[90vh] overflow-hidden rounded-3xl">
+    <section className="relative w-full h-[65vh] md:h-[90vh] overflow-hidden">
       <Swiper
         modules={[Navigation, Pagination, A11y, Autoplay]}
         spaceBetween={0}
@@ -69,7 +69,7 @@ const Hero = () => {
                 className="object-cover object-center rounded-3xl transition-transform duration-4000 ease-linear scale-105 hover:scale-110"
                 priority
               />
-              <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/50 to-transparent rounded-3xl"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/50 to-transparent"></div>
             </div>
 
             {/* Content Overlay */}

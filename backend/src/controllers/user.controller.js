@@ -27,7 +27,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
   const userProfile = await User.findById(userId).select("-password");
 
-  if (userProfile._id !== userId) {
+  if (!userId) {
     res.status(404);
     throw new Error("User not found");
   }

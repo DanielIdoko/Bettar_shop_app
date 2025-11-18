@@ -16,7 +16,7 @@ const NavBar = () => {
     <header className="navbar">
       <Link href="/">
         <Image
-          src='https://chatgpt.com/backend-api/estuary/content?id=file_00000000cc4871f4945c5a96a168ad3b&ts=489527&p=fs&cid=1&sig=2d556b00432ad209c2a3474b97687b0795bc0d52ab9920f329b8dd422fd21c2c&v=0'
+          src="https://chatgpt.com/backend-api/estuary/content?id=file_00000000cc4871f4945c5a96a168ad3b&ts=489527&p=fs&cid=1&sig=2d556b00432ad209c2a3474b97687b0795bc0d52ab9920f329b8dd422fd21c2c&v=0"
           alt="Bettar Shop logo"
           width={100}
           height={50}
@@ -38,11 +38,8 @@ const NavBar = () => {
         </div>
       </div>
 
-      {isAuthenticated ? (
-        <ProfileIcon
-          avatar_url={user?.avatar}
-          username={user?.name || "Idoko Daniel"}
-        />
+      {isAuthenticated && user ? (
+        <ProfileIcon avatar_url={user?.avatar} username={user?.name} userId={user?._id}/>
       ) : (
         <div className="h-full w-fit p-2 flex items-center gap-4 ml-0">
           <Button

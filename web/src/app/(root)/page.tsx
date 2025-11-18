@@ -1,41 +1,36 @@
 "use client";
 import React, { useEffect } from "react";
-import api from "../../../utils/api";
-import CategoryList from "../../../components/CategoryList";
-import NewArrivals from "../../../components/NewArrivals";
-import Hero from "../../../components/Hero";
-import FeaturedDeals from "../../../components/FeaturedDeals";
-import Brands from "../../../components/Brands";
-import HelpCenter from "../../../components/HelpCenter";
+import Home from "../../../components/Home";
+import { useStore } from "../../../hooks/useStore";
 
-
-const Home = () => {
-  const fetchData = async () => {
-    const response = await api.get("/products");
-    const data = await response.data;
-    console.log(data);
-  };
+const Main = () => {
+  const {
+    isLoading,
+    error,
+    fetchByBrands,
+    fetchLatestArrivals,
+    brands,
+    latestArrivals,
+    productError,
+    productLoading,
+  } = useStore();
 
   useEffect(() => {
-    fetchData();
+    fetchByBrands();
+    fetchLatestArrivals();
   }, []);
 
   return (
-    <main className="home">
-     <Hero />
-      {/* category list starts*/}
-      <CategoryList />
-      {/* category list ends*/}
-      {/* New Arrivals starts */}
-      <NewArrivals />
-      {/* New Arrivals ends */}
-      {/* Featured Deals starts */}
-      <FeaturedDeals />
-      {/* Featured Deals ends */}
-      <Brands />
-      <HelpCenter />
-    </main>
+    // Home Client
+    <Home
+      brands={brands}
+      latestArrivals={latestArrivals}
+      isLoading={isLoading}
+      error={error}
+      productError={productError}
+      productLoading={productLoading}
+    />
   );
 };
 
-export default Home;
+export default Main;

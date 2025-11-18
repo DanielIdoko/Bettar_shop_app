@@ -13,7 +13,7 @@ const ArrivalProduct = ({ latestArrival }: { latestArrival: Product }) => {
       <Image
         src={latestArrival.images[0]}
         width={400}
-        height={400}
+        height={450}
         className="rounded-xl"
         alt={latestArrival.title}
       />

@@ -6,14 +6,15 @@ import Image from "next/image";
 import Spinner from "./ui/spinner";
 import ArrivalProduct from "./ArrivalProduct";
 
-const NewArrivals = () => {
-  const { fetchLatestArrivals, isLoading, error, latestArrivals } =
-    useProductStore();
-
-  useEffect(() => {
-    fetchLatestArrivals();
-  }, [fetchLatestArrivals]);
-
+const NewArrivals = ({
+  latestArrivals,
+  isLoading,
+  error,
+}: {
+  latestArrivals: any[];
+  isLoading: boolean;
+  error: string | null;
+}) => {
   return (
     <section className="section">
       <div className="w-full h-fit flex items-center">
@@ -30,7 +31,7 @@ const NewArrivals = () => {
           <p className="text-center text-md text-error">{error}</p>
         ) : latestArrivals.length > 0 ? (
           <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {latestArrivals.slice(0,4).map((latestArrival) => (
+            {latestArrivals.slice(0, 4).map((latestArrival) => (
               <ArrivalProduct
                 key={latestArrival._id}
                 latestArrival={latestArrival}
@@ -39,7 +40,7 @@ const NewArrivals = () => {
           </div>
         ) : (
           <p className="info">No new arrivals yet</p>
-        )} 
+        )}
       </div>
     </section>
   );

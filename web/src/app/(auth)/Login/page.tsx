@@ -4,11 +4,14 @@ import { useFormik } from "formik";
 import Link from "next/link";
 import { Eye, EyeClosed } from "lucide-react";
 import { useAuthStore } from "../../../../store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const { login, user } = useAuthStore();
+  const { login, error, isLoading, user } = useAuthStore();
 
+  // Valide input fields
   const validate = (values: any) => {
     const errors: any = {};
 
@@ -37,14 +40,15 @@ const LoginPage = () => {
       const successLogin = await login(values.email, values.password);
       if (successLogin) {
         resetForm();
+        router.push('/');
       }
     },
   });
 
   return (
     <section className="min-h-screen bg-base px-4">
-      <p className="text-3xl text-center text-primary font-bold p-10">
-        Welcome back 😊
+      <p className="text-xl md:text-2xl text-center text-primary font-semibold font-open-sans p-10">
+        Welcome back! Please login to your account.
       </p>
       <div className="w-full h-fit flex items-center justify-center">
         <form
@@ -120,10 +124,15 @@ const LoginPage = () => {
           {/* Submit */}
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-primary text-white py-2 rounded-md font-open-sans hover:bg-primary-lighter transition-colors cursor-pointer"
           >
-            Get Started
+            Login
           </button>
+          {error && (
+            <p className="mt-4 text-center text-sm text-error">{error}</p>
+          )}
+
           <p className="text-small text-center py-3">
             New User?{" "}
             <Link href="/Register" className="text-blue-700 underline">

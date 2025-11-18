@@ -20,6 +20,7 @@ type AuthState = {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   fetchAuthenticatedUser: () => Promise<void>;
+  fetchUserProfile: (userId: string) => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -46,19 +47,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       // Check for token to verify user logged in
-      if (data?.token) {
+      if (data.data?.token) {
         set({
           isAuthenticated: true,
-          user: data.user,
+          user: data.data.user,
         });
         return true;
       }
-      
+
       return false;
     } catch (err: any) {
       console.error("Registration failed:", err.response?.data || err.message);
 
-      set({ error: "An error occured. Please try again.", isAuthenticated: false });
+      set({
+        error: "An error occured. Please try again.",
+        isAuthenticated: false,
+      });
       return false;
     } finally {
       set({ isLoading: false });
@@ -84,7 +88,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       return false;
     } catch (err: any) {
-      console.error("Login failed:", err.response?.data || err.message);
+      console.error("Login failed:", err.response?.data.data || err.message);
 
       set({ error: "Invalid credentials", isAuthenticated: false });
       return false;
@@ -109,10 +113,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true });
       const { data } = await api.get("/auth/me");
-      set({ user: data.user, isAuthenticated: true });
+      if (data) {
+        set({
+          isAuthenticated: true,
+          user: data.data,
+        });
+      }
     } catch (err: any) {
       console.warn("User not authenticated:", err.message);
       set({ isAuthenticated: false, user: null });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // Fetch user profile
+  fetchUserProfile: async (userId) => {
+    try {
+      set({ isLoading: true });
+      const { data } = await api.get(`/users/profile/${userId}`);
+      if (data) {
+        set({
+          user: data.data,
+        });
+      }
+    } catch (err: any) {
+      console.warn("User profile not found:", err.message);
+      set({ user: null });
     } finally {
       set({ isLoading: false });
     }

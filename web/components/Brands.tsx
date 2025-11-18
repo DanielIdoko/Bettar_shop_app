@@ -2,14 +2,18 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useProductStore } from "../store/useProductStore";
+import Spinner from "./ui/spinner";
+import Brand from "./Brand";
 
-const Brands = () => {
-  const { brands, fetchByBrands } = useProductStore();
-
-  useEffect(() => {
-    fetchByBrands();
-  }, []);
-
+const Brands = ({
+  brands,
+  isLoading,
+  error,
+}: {
+  brands: string[];
+  isLoading: boolean;
+  error: string | null;
+}) => {
   return (
     <section className="section">
       <div className="w-full h-fit flex items-center">
@@ -20,30 +24,12 @@ const Brands = () => {
       </div>
       {/* Brands */}
       <ul className="brands-grid">
-        {brands.length > 0 ? (
-          brands.map(
-            (brand) => (
-              console.log(brand),
-              (
-                <li className="brand-item" key={brand}>
-                  <Link
-                    href={`/products?brand=${brand}`}
-                    className="brand-card"
-                  >
-                    <img
-                      src={`https://source.unsplash.com/600x600/?${encodeURIComponent(
-                        brand
-                      )}`}
-                      alt={brand}
-                    />
-                    <p>{brand}</p>
-                  </Link>
-                </li>
-              )
-            )
-          )
+        {isLoading ? (
+          <Spinner />
+        ) : brands.length > 0 ? (
+          brands.map((brand) => <Brand brand={brand} key={brand}/>)
         ) : (
-          <p>No brands available.</p>
+          <p className="text-center text-small text-error">{error}</p>
         )}
       </ul>
     </section>

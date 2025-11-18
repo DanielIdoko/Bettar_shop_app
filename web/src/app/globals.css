@@ -275,12 +275,21 @@
   @apply text-x-small md:text-x-small lg:text-small font-open-sans flex justify-center items-center gap-2;
 }
 .footer .footer-heading {
-  @apply text-medium text-dark font-open-sans pt-7 pb-2;
+  @apply text-small text-dark font-open-sans pt-7 pb-2;
 }
 .footer .links-container {
   @apply w-fit h-full flex flex-col gap-2 p-4;
 }
 .links-container a {
-  @apply text-small text-dark/60 font-open-sans transition duration-200 ease-in-out hover:text-dark
+  @apply text-small text-dark/40 font-open-sans transition duration-200 ease-in-out hover:text-dark
   ;
+}
+
+/* Profile */
+
+.profile-sidebar {
+  @apply w-[270px] h-screen bg-white border-r p-4 py-2 border-r-muted flex flex-col items-center 
+}
+.profile-sidebar-link{
+  @apply text-small text-gray-500 p-2 flex items-center gap-3 rounded-md cursor-pointer
 }

@@ -5,45 +5,45 @@ import Link from "next/link";
 import { footerCards } from "../../constants";
 
 // Card component for payment methods
-const Card = ({
-  card_image,
-  card_name,
-}: {
-  card_image: string;
-  card_name: string;
-}) => {
-  return (
-    <div className="border p-2 w-15 h-10 border-gray-400 rounded-xl flex items-center justify-center">
-      <img src={card_image} alt={card_name} />
-    </div>
-  );
-};
+// const Card = ({
+//   card_image,
+//   card_name,
+// }: {
+//   card_image: string;
+//   card_name: string;
+// }) => {
+//   return (
+//     <div className="border p-2 w-15 h-10 border-gray-300 rounded-md flex items-center justify-center">
+//       <img src={card_image} alt={card_name} />
+//     </div>
+//   );
+// };
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="w-fit h-full p-3">
         <img
-          src={""}
+          src={undefined}
           alt="Flix Logo"
           className="footer-logo w-12 h-12 rounded-full"
         />
         <span className="text-dark font-semibold text-small md:text-medium-size font-open-sans">
           Flix Shop
         </span>
-        <p className="pt-6 text-dark text-small font-open-sans">
+        <p className="pt-6 text-dark/60 text-small font-open-sans">
           Experience a seamless, personalized, and rewarding way to shop. We're
           building the future of retail, one order at a time.
         </p>
         <p className="footer-heading">Accepted Payments</p>
         <div className="cards-container">
-          {footerCards.map((card) => (
+          {/* {footerCards.map((card) => (
             <Card
               card_image={card.card_image}
               card_name={card.card_title}
               key={card.id}
             />
-          ))}
+          ))} */}
         </div>
       </div>
       <div className="h-full w-full md:col-span-2 p-2 md:flex md:justify-start md:gap-5 lg:gap-30">
@@ -112,7 +112,7 @@ const Footer = () => {
             target="blank"
             className="text-small md:text-x-small lg:text-small font-open-sans text-gray-700 md:text-dark lg:text-gray-700 "
           >
-            Built with love by Daniel ✨ | 2025
+            Copyright @Bettar Shop | 2025
           </Link>
         </div>
       </div>

@@ -1,3 +1,4 @@
+// Middleware: protect
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/env.config.js";
 import User from "../models/user.model.js";
@@ -31,8 +32,8 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized - User not found" });
     }
 
-    // Attach user object to request
-    req.user = user;
+    // Attach user object to request (use plain object to avoid mongoose internals)
+    req.user = user.toObject();
 
     next();
   } catch (error) {

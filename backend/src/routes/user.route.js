@@ -11,7 +11,6 @@ import {
   deleteUserAccount,
 } from "../controllers/user.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
-import { cacheMiddleware } from "../middlewares/cache.middleware.js";
 
 const userRouter = Router();
 
@@ -21,7 +20,7 @@ const userRouter = Router();
  * @access  Private
  */
 userRouter.get(
-  "/profile/:id",
+  "/user-profile/:id",
   protect,
   // cacheMiddleware("user"),
   getUserProfile
@@ -32,7 +31,7 @@ userRouter.get(
  * @desc    Update user profile (name, email, phone, etc.)
  * @access  Private
  */
-userRouter.put("/profile/:id", protect, updateUserProfile);
+userRouter.put("profile/:id", protect, updateUserProfile);
 
 /**
  * @route   PUT /api/users/password/:id

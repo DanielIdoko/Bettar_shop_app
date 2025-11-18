@@ -40,8 +40,6 @@ export const useProductStore = create<ProductState>((set, get) => ({
     try {
       const response = await api.get("/products/brands");
       set({ brands: response.data.data });
-      
-      // console.log(response.data.data);
       set({ isLoading: false, error: null });
     } catch (error: any) {
       console.error(error.message);
