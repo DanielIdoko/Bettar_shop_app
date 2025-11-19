@@ -31,7 +31,7 @@ userRouter.get(
  * @desc    Update user profile (name, email, phone, etc.)
  * @access  Private
  */
-userRouter.put("profile/:id", protect, updateUserProfile);
+userRouter.put("/profile/:id", protect, updateUserProfile);
 
 /**
  * @route   PUT /api/users/password/:id

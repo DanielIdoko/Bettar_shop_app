@@ -48,7 +48,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const updateUserProfile = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id || req.user.id;
   const cacheKey = `user:${userId}`;
 
   await clearCache(userId);
@@ -56,23 +56,16 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   // Set new updates to profile
   const updatedProfile = await User.findByIdAndUpdate(
     userId,
-    { $set: { ...req.body } },
-    { new: true }
-  )
-    .populate("name email phone avatar")
-    .select("-password");
+    { $set: req.body },
+    { new: true, runValidators: true }
+  ).select("-password");
 
-  if (!updatedProfile) {
-    res.status(404);
-    throw new Error("User not found");
-  }
-
-  // Save to updated profile to cache
+  // Save updated profile to cache
   await setCache(cacheKey, updatedProfile);
 
   res.status(200).json({
     success: true,
-    message: "Profile Successfully updated",
+    message: "Profile successfully updated",
     data: updatedProfile,
   });
 });

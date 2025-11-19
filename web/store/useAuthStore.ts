@@ -21,6 +21,13 @@ type AuthState = {
   logout: () => Promise<void>;
   fetchAuthenticatedUser: () => Promise<void>;
   fetchUserProfile: (userId: string) => Promise<void>;
+  updateUserProfile: (
+    userId: string,
+    name: string,
+    email: string,
+    phone: string,
+    country: string
+  ) => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -139,6 +146,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     } catch (err: any) {
       console.warn("User profile not found:", err.message);
+      set({ user: null });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // update user profile
+  updateUserProfile: async (userId, name, email, phone, country) => {
+    try {
+      set({ isLoading: true, error: null });
+      const { data } = await api.put(`/users/profile/${userId}`, {
+        name,
+        email,
+        phone,
+        country
+      });
+
+      if (data) {
+        set({
+          user: data.data,
+        });
+      }
+    } catch (err: any) {
+      console.warn("Failed to update user profile. Try again.", err.message);
       set({ user: null });
     } finally {
       set({ isLoading: false });

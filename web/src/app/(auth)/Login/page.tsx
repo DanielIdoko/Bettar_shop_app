@@ -5,11 +5,12 @@ import Link from "next/link";
 import { Eye, EyeClosed } from "lucide-react";
 import { useAuthStore } from "../../../../store/useAuthStore";
 import { useRouter } from "next/navigation";
+import Spinner from "../../../../components/ui/spinner";
 
 const LoginPage = () => {
   const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const { login, error, isLoading, user } = useAuthStore();
+  const { login, error, isLoading } = useAuthStore();
 
   // Valide input fields
   const validate = (values: any) => {
@@ -40,7 +41,7 @@ const LoginPage = () => {
       const successLogin = await login(values.email, values.password);
       if (successLogin) {
         resetForm();
-        router.push('/');
+        router.push("/");
       }
     },
   });
@@ -127,7 +128,7 @@ const LoginPage = () => {
             disabled={isLoading}
             className="w-full bg-primary text-white py-2 rounded-md font-open-sans hover:bg-primary-lighter transition-colors cursor-pointer"
           >
-            Login
+            {isLoading ? 'Loading...' : "Login"}
           </button>
           {error && (
             <p className="mt-4 text-center text-sm text-error">{error}</p>

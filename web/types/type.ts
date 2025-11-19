@@ -34,6 +34,7 @@ export interface User {
   email: string;
   avatar: string;
   phone: string;
+  country: string;
   addresses: [Address] | [];
   preferences: {
     theme: "light" | "dark";
@@ -41,6 +42,8 @@ export interface User {
   };
   wishlist: [];
   isAdmin: boolean;
+  twoFactorEnabled?: boolean;
+  isEmailVerified?: boolean;  
 }
 
 export interface ProductMetadata {

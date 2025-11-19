@@ -293,3 +293,7 @@
 .profile-sidebar-link{
   @apply text-small text-gray-500 p-2 flex items-center gap-3 rounded-md cursor-pointer hover:bg-muted transition duration-200 ease-in
 }
+
+.profile-heading{
+  @apply text-medium text-dark font-open-sans py-2;
+}
